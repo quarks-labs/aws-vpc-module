@@ -7,9 +7,9 @@ Terraform module which creates VPC resources on AWS.
 
 ```hcl
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source = "git::git@github.com:quarks-labs/aws-vpc-module.git"
 
-  name = "my-vpc"
+  name = "quarks-labs"
   cidr = "10.0.0.0/16"
 
   azs             = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
@@ -48,7 +48,7 @@ Then, pass the allocated IPs as a parameter to this module.
 
 ```hcl
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source = "git::git@github.com:quarks-labs/aws-vpc-module.git"
 
   # The rest of arguments are omitted for brevity
 
@@ -140,7 +140,7 @@ Prior to Terraform 0.13, you were unable to specify `count` in a module block. I
 ```hcl
 # This VPC will not be created
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source = "git::git@github.com:quarks-labs/aws-vpc-module.git"
 
   create_vpc = false
   # ... omitted
@@ -176,13 +176,6 @@ Sometimes it is handy to have public access to Redshift clusters (for example if
   enable_public_redshift = true  # <= By default Redshift subnets will be associated with the private route table
 ```
 
-## Transit Gateway (TGW) integration
-
-It is possible to integrate this VPC module with [terraform-aws-transit-gateway module](https://github.com/terraform-aws-modules/terraform-aws-transit-gateway) which handles the creation of TGW resources and VPC attachments. See [complete example there](https://github.com/terraform-aws-modules/terraform-aws-transit-gateway/tree/master/examples/complete).
-
-## VPC CIDR from AWS IP Address Manager (IPAM)
-
-It is possible to have your VPC CIDR assigned from an [AWS IPAM Pool](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_ipam_pool). However, In order to build subnets within this module Terraform must know subnet CIDRs to properly plan the amount of resources to build. Since CIDR is derived by IPAM by calling CreateVpc this is not possible within a module unless cidr is known ahead of time. You can get around this by "previewing" the CIDR and then using that as the subnet values.
 
 _Note: Due to race conditions with `terraform plan`, it is not possible to use `ipv4_netmask_length` or a pools `allocation_default_netmask_length` within this module. You must explicitly set the CIDRs for a pool to use._
 
@@ -218,7 +211,7 @@ locals {
 }
 
 module "vpc_cidr_from_ipam" {
-  source            = "terraform-aws-modules/vpc/aws"
+  source            = "git::git@github.com:quarks-labs/aws-vpc-module.git"
   name              = "vpc-cidr-from-ipam"
   ipv4_ipam_pool_id = data.aws_vpc_ipam_pool.ipv4_example.id
   azs               = local.azs
